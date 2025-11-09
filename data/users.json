@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Harmeet Singh",
+    "email": "harmeet@example.com",
+    "favorites": [1, 3]
+  },
+  {
+    "id": 2,
+    "name": "Aman Gill",
+    "email": "aman@example.com",
+    "favorites": [2]
+  }
+]

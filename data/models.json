@@ -1,0 +1,5 @@
+[
+  { "id": 1, "manufacturerId": 1, "name": "Corolla", "yearStart": 1966 },
+  { "id": 2, "manufacturerId": 2, "name": "Civic", "yearStart": 1972 },
+  { "id": 3, "manufacturerId": 3, "name": "Model 3", "yearStart": 2017 }
+]
