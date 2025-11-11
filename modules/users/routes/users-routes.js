@@ -5,62 +5,83 @@ import {
   addNewUser,
   updateUser,
   deleteUser,
-  addFavoriteCar,
 } from "../models/users-model.js";
-import { createUserRules } from "../middlewares/create-user-rules.js";
-import { updateUserRules } from "../middlewares/update-user-rules.js";
-import { validationResult } from "express-validator";
+import { Car } from "../../cars/models/cars-model.js";
 
 const router = express.Router();
 
-// Helper for validation
-function handleValidation(req, res, next) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+router.get("/", async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Error fetching users" });
   }
-  next();
-}
-
-// GET all users
-router.get("/", (req, res) => {
-  res.status(200).json(getAllUsers());
 });
 
-// GET user by ID
-router.get("/:id", (req, res) => {
-  const user = getUserById(req.params.id);
-  if (!user) return res.status(404).json({ message: "User not found" });
-  res.status(200).json(user);
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await getUserById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Error fetching user" });
+  }
 });
 
-// POST new user
-router.post("/", createUserRules, handleValidation, (req, res) => {
-  const newUser = addNewUser(req.body);
-  res.status(201).json(newUser);
+router.post("/", async (req, res) => {
+  try {
+    const newUser = await addNewUser(req.body);
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(400).json({ message: "Error creating user" });
+  }
 });
 
-// PUT update user
-router.put("/:id", updateUserRules, handleValidation, (req, res) => {
-  const updated = updateUser(req.params.id, req.body);
-  if (!updated) return res.status(404).json({ message: "User not found" });
-  res.status(200).json(updated);
+router.put("/:id", async (req, res) => {
+  try {
+    const updated = await updateUser(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ message: "User not found" });
+    res.json(updated);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(400).json({ message: "Error updating user" });
+  }
 });
 
-// DELETE user
-router.delete("/:id", (req, res) => {
-  const deleted = deleteUser(req.params.id);
-  if (!deleted) return res.status(404).json({ message: "User not found" });
-  res.status(200).json({ message: "User deleted" });
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await deleteUser(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Error deleting user" });
+  }
 });
 
-// POST add favorite car
-router.post("/:id/favorites/:carId", (req, res) => {
-  const updated = addFavoriteCar(req.params.id, req.params.carId);
-  if (updated === "car-not-found")
-    return res.status(404).json({ message: "Car not found" });
-  if (!updated) return res.status(404).json({ message: "User not found" });
-  res.status(200).json(updated);
+router.post("/:id/favorites/:carId", async (req, res) => {
+  try {
+    const user = await getUserById(req.params.id);
+    const car = await Car.findById(req.params.carId);
+
+    if (!user || !car)
+      return res.status(404).json({ message: "User or car not found" });
+
+    if (!user.favorites.includes(car._id)) {
+      user.favorites.push(car._id);
+      await user.save();
+    }
+
+    const updatedUser = await getUserById(req.params.id);
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Error adding favorite car:", error);
+    res.status(500).json({ message: "Error adding favorite car" });
+  }
 });
 
 export default router;

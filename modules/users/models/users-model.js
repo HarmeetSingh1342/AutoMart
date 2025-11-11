@@ -1,83 +1,34 @@
-import fs from "fs";
-import path from "path";
+import mongoose from "mongoose";
 
-const usersPath = path.resolve("data/users.json");
-const carsPath = path.resolve("data/cars.json");
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Car",
+}],
+});
 
-const readUsers = () => JSON.parse(fs.readFileSync(usersPath));
-const writeUsers = (data) => fs.writeFileSync(usersPath, JSON.stringify(data, null, 2));
-const readCars = () => JSON.parse(fs.readFileSync(carsPath));
+export const User = mongoose.model("User", userSchema);
 
-// 🟩 READ all users (with full favorite car details)
-export function getAllUsers() {
-  const users = readUsers();
-  const cars = readCars();
-
-  return users.map((user) => ({
-    ...user,
-    favorites: user.favorites
-      .map((carId) => cars.find((c) => c.id === Number(carId)))
-      .filter((car) => car !== undefined),
-  }));
+export async function addNewUser(data) {
+  const newUser = new User(data);
+  return await newUser.save();
 }
 
-// 🟩 READ single user by ID (with full favorite car details)
-export function getUserById(id) {
-  const users = readUsers();
-  const cars = readCars();
-  const user = users.find((u) => u.id === Number(id));
-  if (!user) return null;
-
-  return {
-    ...user,
-    favorites: user.favorites
-      .map((carId) => cars.find((c) => c.id === Number(carId)))
-      .filter((car) => car !== undefined),
-  };
+export async function getAllUsers() {
+  return await User.find().populate("favorites");
 }
 
-// 🟨 CREATE user
-export function addNewUser(newUser) {
-  const users = readUsers();
-  const nextId = users.length ? users[users.length - 1].id + 1 : 1;
-  const userToAdd = { id: nextId, favorites: [], ...newUser };
-  users.push(userToAdd);
-  writeUsers(users);
-  return userToAdd;
+export async function getUserById(id) {
+  return await User.findById(id).populate("favorites");
 }
 
-// 🟦 UPDATE user
-export function updateUser(id, updates) {
-  const users = readUsers();
-  const index = users.findIndex((u) => u.id === Number(id));
-  if (index === -1) return null;
-  users[index] = { ...users[index], ...updates };
-  writeUsers(users);
-  return users[index];
+export async function updateUser(id, data) {
+  return await User.findByIdAndUpdate(id, data, { new: true });
 }
 
-// 🟥 DELETE user
-export function deleteUser(id) {
-  const users = readUsers();
-  const filtered = users.filter((u) => u.id !== Number(id));
-  if (filtered.length === users.length) return false;
-  writeUsers(filtered);
-  return true;
-}
-
-// ⭐ ADD favorite car to user
-export function addFavoriteCar(userId, carId) {
-  const users = readUsers();
-  const cars = readCars();
-  const userIndex = users.findIndex((u) => u.id === Number(userId));
-  const carExists = cars.some((c) => c.id === Number(carId));
-
-  if (userIndex === -1) return null;
-  if (!carExists) return "car-not-found";
-
-  if (!users[userIndex].favorites.includes(Number(carId))) {
-    users[userIndex].favorites.push(Number(carId));
-    writeUsers(users);
-  }
-  return users[userIndex];
+export async function deleteUser(id) {
+  return await User.findByIdAndDelete(id);
 }

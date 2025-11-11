@@ -1,46 +1,34 @@
-import fs from "fs";
-import path from "path";
+import mongoose from "mongoose";
 
+const carSchema = new mongoose.Schema({
+  manufacturer: { type: String, required: true },
+  model: { type: String, required: true },
+  fuel: { type: String, required: true },
+  engine: { type: Number, required: true },
+  year: { type: Number, required: true },
+  mileage: { type: Number, required: true },
+  price: { type: Number, required: true },
+});
 
+export const Car = mongoose.model("Car", carSchema);
 
-const dataPath = path.resolve("data/cars.json");
-console.log("Reading from:", dataPath);
-
-const readData = () => JSON.parse(fs.readFileSync(dataPath));
-const writeData = (data) =>
-  fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
-
-export function getAllCars() {
-  return readData();
+export async function addNewCar(data) {
+  const newCar = new Car(data);
+  return await newCar.save();
 }
 
-export function getCarById(id) {
-  const cars = readData();
-  return cars.find((car) => car.id === Number(id));
+export async function getAllCars() {
+  return await Car.find();
 }
 
-export function addNewCar(newCar) {
-  const cars = readData();
-  const nextId = cars.length ? cars[cars.length - 1].id + 1 : 1;
-  const carToAdd = { id: nextId, ...newCar };
-  cars.push(carToAdd);
-  writeData(cars);
-  return carToAdd;
+export async function getCarById(id) {
+  return await Car.findById(id);
 }
 
-export function updateCar(id, updates) {
-  const cars = readData();
-  const index = cars.findIndex((car) => car.id === Number(id));
-  if (index === -1) return null;
-  cars[index] = { ...cars[index], ...updates };
-  writeData(cars);
-  return cars[index];
+export async function updateCar(id, data) {
+  return await Car.findByIdAndUpdate(id, data, { new: true });
 }
 
-export function deleteCar(id) {
-  const cars = readData();
-  const filtered = cars.filter((car) => car.id !== Number(id));
-  if (filtered.length === cars.length) return false;
-  writeData(filtered);
-  return true;
+export async function deleteCar(id) {
+  return await Car.findByIdAndDelete(id);
 }
