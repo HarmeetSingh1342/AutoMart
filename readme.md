@@ -102,11 +102,11 @@ Clicking **View Cars** opens the live `/cars` endpoint that shows the current ca
 In this phase, the AutoMart backend was upgraded from using local JSON files to a real MongoDB Atlas cloud database. All CRUD operations for cars and users now use Mongoose models so data is saved and updated in the cloud.
 
 ### Database Setup
--Created a MongoDB Atlas free-tier cluster named AutoMartCluster.
--Installed mongoose and dotenv packages.
--Added a .env file with the MongoDB connection string and port number.
--Added a new shared/middlewares/connect-db.js file that connects the app to MongoDB using Mongoose.
--Updated server.js to load environment variables and connect to MongoDB before starting the server.
+- `Created a MongoDB Atlas free-tier cluster named AutoMartCluster.`
+- `Installed mongoose and dotenv packages.`
+- `Added a .env file with the MongoDB connection string and port number.`
+- `Added a new shared/middlewares/connect-db.js file that connects the app to MongoDB using Mongoose.`
+- `Updated server.js to load environment variables and connect to MongoDB before starting the server.`
 
 ### Mongoose Models
 ## Car Model:
@@ -119,29 +119,29 @@ The favorites field stores ObjectIds that reference cars in the Cars collection,
 ### CRUD Operations
 
 Cars:
--GET /cars – get all cars
--GET /cars/:id – get a car by id
--POST /cars – add a new car
--PUT /cars/:id – update an existing car
--DELETE /cars/:id – delete a car
+- `GET /cars – get all cars`
+- `GET /cars/:id – get a car by id`
+- `POST /cars – add a new car`
+- `PUT /cars/:id – update an existing car`
+- `DELETE /cars/:id – delete a car`
 
 Users:
--GET /users – list all users (shows favorite cars)
--POST /users – create a new user
--PUT /users/:id – update user info
--DELETE /users/:id – delete user
--POST /users/:id/favorites/:carId – add a car to user’s favorites
+- `GET /users – list all users (shows favorite cars)`
+- `POST /users – create a new user`
+- `PUT /users/:id – update user info`
+- `DELETE /users/:id – delete user`
+- `POST /users/:id/favorites/:carId – add a car to user’s favorites`
 
 All routes were tested with Postman and verified to store and retrieve live data from MongoDB Atlas.
 
 ### Homepage Update
 The homepage (screens/homepage.html) now includes two buttons:
-View Cars – goes to /cars
-View Users – goes to /users
-Both buttons display live data directly from the MongoDB database.
+- `View Cars – goes to /cars`
+- `View Users – goes to /users`
+- `Both buttons display live data directly from the MongoDB database.`
 
 ### Testing and Results
--Verified CRUD operations for both Cars and Users in Postman.
--Confirmed that data appears in the MongoDB Atlas collections after inserts and updates.
--Favorites relationship works and shows full car details.
--Connection handled securely through .env variables.
+- `Verified CRUD operations for both Cars and Users in Postman.`
+- `Confirmed that data appears in the MongoDB Atlas collections after inserts and updates.`
+- `Favorites relationship works and shows full car details.`
+- `Connection handled securely through .env variables.`
