@@ -145,3 +145,18 @@ The homepage (screens/homepage.html) now includes two buttons:
 - `Confirmed that data appears in the MongoDB Atlas collections after inserts and updates.`
 - `Favorites relationship works and shows full car details.`
 - `Connection handled securely through .env variables.`
+
+## Phase 4: Frontend Integration with React + Vite
+
+### Objective
+In this phase, a complete frontend interface was built using React + Vite and connected to the existing AutoMart backend API.
+The frontend provides live pages for viewing cars, adding cars, managing users, and displaying favorites, all powered by real data from MongoDB Atlas.
+
+### Frontend Setup
+
+- `Created a new frontend/ and backend/ folder inside the project root.`
+- `Initialized a React app using Vite (npm create vite@latest).`
+- `Installed axios for making API requests.`
+- `Started the frontend using npm run dev at http://localhost:5173/.`
+- `Started the backend using node server.js`
+- `Verified backend CORS setup so the frontend can successfully call API endpoints.`

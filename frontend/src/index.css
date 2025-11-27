@@ -1,0 +1,98 @@
+
+:root {
+  --bg-dark: #1a1a1a;
+  --bg-light: #222;
+  --text-light: #f5f5f5;
+  --primary: #4cc9f0;
+  --primary-hover: #3aa8cb;
+  --card-bg: #2a2a2a;
+  --border-soft: #3d3d3d;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  font-family: "Segoe UI", sans-serif;
+}
+
+nav {
+  background: var(--bg-light);
+  padding: 15px 25px;
+  display: flex;
+  justify-content: center;
+  gap: 35px;
+  font-size: 18px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+nav a:hover {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+main {
+  padding: 40px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.car-card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  transition: 0.25s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+}
+
+.car-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.car-detail {
+  margin: 6px 0;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.btn {
+  margin-top: 15px;
+  background: var(--primary);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: black;
+  transition: 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+}
