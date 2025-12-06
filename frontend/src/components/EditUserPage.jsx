@@ -1,17 +1,40 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function AddUserPage() {
+export default function EditUserPage() {
   const { token } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: "",
     role: "customer",
   });
   const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    if (!token) return;
+
+    axios
+      .get(`http://localhost:3000/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const u = res.data;
+        setForm({
+          name: u.name,
+          email: u.email,
+          role: u.role,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        setMsg("Failed to load user");
+      });
+  }, [id, token]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,25 +44,20 @@ export default function AddUserPage() {
     setMsg("");
 
     try {
-      await axios.post("http://localhost:3000/users", form, {
+      await axios.put(`http://localhost:3000/users/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMsg("User added successfully!");
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-        role: "customer",
-      });
+      setMsg("User updated successfully!");
+      navigate("/users");
     } catch (err) {
       console.error(err);
-      setMsg("Failed to add user");
+      setMsg("Failed to update user");
     }
   };
 
   return (
     <div style={{ maxWidth: "500px", margin: "0 auto" }}>
-      <h1>Add User</h1>
+      <h1>Edit User</h1>
 
       <form
         onSubmit={handleSubmit}
@@ -59,14 +77,6 @@ export default function AddUserPage() {
           onChange={handleChange}
           required
         />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
         <select
           name="role"
           value={form.role}
@@ -77,7 +87,7 @@ export default function AddUserPage() {
           <option value="admin">Admin</option>
         </select>
 
-        <button type="submit">Add User</button>
+        <button type="submit">Save Changes</button>
       </form>
 
       {msg && <p style={{ marginTop: "10px" }}>{msg}</p>}

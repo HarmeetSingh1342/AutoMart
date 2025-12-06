@@ -1,87 +1,80 @@
 
+
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function UsersPage() {
+  const { token } = useAuth();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const loadUsers = () => {
     axios
-      .get("http://localhost:3000/users")
-      .then((res) => {
-        setUsers(res.data);
-        setLoading(false);
+      .get("http://localhost:3000/users", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .catch(() => {
-        setError("Failed to load users");
-        setLoading(false);
+      .then((res) => setUsers(res.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Failed to load users.");
       });
   };
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    if (token) loadUsers();
+  }, [token]);
 
-  const deleteUser = async (id) => {
+  const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/users/${id}`);
+      await axios.delete(`http://localhost:3000/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       loadUsers();
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err);
       alert("Failed to delete user");
     }
   };
 
-  if (loading) return <p>Loading users...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>Users</h1>
+    <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+      <h1>All Users</h1>
 
-      {users.map((user) => (
+      {users.length === 0 && <p>No users found.</p>}
+
+      {users.map((u) => (
         <div
-          key={user._id}
+          key={u._id}
           style={{
-            marginBottom: "1.5rem",
-            padding: "1rem",
-            border: "1px solid #ddd",
+            background: "#222",
+            padding: "10px",
+            margin: "10px 0",
             borderRadius: "6px",
+            border: "1px solid #555",
           }}
         >
-          <h3>{user.name}</h3>
-          <p>Email: {user.email}</p>
-
-          <strong>Favorites:</strong>
-          {user.favorites?.length ? (
-            <ul>
-              {user.favorites.map((fav) => (
-                <li key={fav._id}>
-                  {fav.manufacturer} {fav.model} — ${fav.price}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No favorites yet.</p>
-          )}
+          <p><strong>Name:</strong> {u.name}</p>
+          <p><strong>Email:</strong> {u.email}</p>
+          <p><strong>Role:</strong> {u.role}</p>
 
           <button
-            onClick={() => deleteUser(user._id)}
-            style={{
-              marginTop: "10px",
-              background: "red",
-              color: "white",
-              padding: "6px 12px",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            onClick={() => navigate(`/edit-user/${u._id}`)}
+            style={{ marginRight: "10px" }}
           >
-            Delete User
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(u._id)}
+            style={{ background: "#d9534f", color: "#fff", border: "none", padding: "5px 10px", cursor: "pointer" }}
+          >
+            Delete
           </button>
         </div>
       ))}

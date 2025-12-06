@@ -160,3 +160,44 @@ The frontend provides live pages for viewing cars, adding cars, managing users, 
 - `Started the frontend using npm run dev at http://localhost:5173/.`
 - `Started the backend using node server.js`
 - `Verified backend CORS setup so the frontend can successfully call API endpoints.`
+
+
+## Phase 5: Authentication, Authorization & Role-Based Access Control (RBAC)
+
+### Backend Enhancements
+
+- `Implemented OTP-based login system using email verification.`
+- `Added JWT authentication for securing API requests.`
+- `Created an auth middleware that validates tokens and attaches the user to req.user.`
+- `Added role-based access (RBAC) to restrict sensitive endpoints.`
+- `Updated user routes so:`
+  - `Admins can manage all users.`
+  - `Users can only access their own profile.`
+- `Added protected favorites routes where customers can add/remove their own favorites.`
+- `Secured car management routes so only admins can add or delete cars.`
+
+### Frontend Enhancements (React + AuthContext)
+
+- `Added Login and OTP Verification pages.`
+- `Created an AuthContext to store JWT and user information.`
+- `Protected frontend routes based on user role (admin vs customer).`
+- `Updated navigation bar to dynamically show links based on role.`
+- `Customers can view cars and manage their favorites only.`
+- `Admins can manage users and cars from the frontend interface.`
+- `Updated CarsPage so:`
+  - `Admin sees a Delete button on each car card.`
+  - `Customer sees Add to Favorites.`
+  - `Both roles use the same card grid layout.`
+- `Updated FavoritesPage to allow customers to remove favorite cars with a clean UI.`
+
+
+### Verification Steps
+
+- `Tested login → OTP → JWT process using Postman and frontend.`
+- `Validated JWT using /test-token endpoint.`
+- `Confirmed RBAC prevents customers from accessing admin routes.`
+- `Verified admins can add/delete cars and manage users.`
+- `Tested customer favorite add/remove functionality end-to-end.`
+- `Ensured frontend adapts to role-based navigation and permissions.`
+
+
