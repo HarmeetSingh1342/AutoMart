@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../AuthContext";
@@ -31,15 +29,25 @@ export default function CarsPage() {
 
   const addFavorite = async (carId) => {
     try {
+      const check = await axios.get(
+        `http://localhost:3000/users/${user.id}/favorites/check/${carId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (check.data.favorited) {
+        alert("Car already added to favorites!");
+        return;
+      }
       await axios.post(
         `http://localhost:3000/users/${user.id}/favorites/${carId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       alert("Added to favorites!");
     } catch (err) {
-      alert("Failed to add favorite.");
       console.error(err);
+      alert("Failed to add favorite.");
     }
   };
 
@@ -48,6 +56,7 @@ export default function CarsPage() {
       <h1 style={{ textAlign: "center", marginBottom: "30px" }}>
         Available Cars
       </h1>
+
       <div
         style={{
           display: "flex",
@@ -110,7 +119,7 @@ export default function CarsPage() {
                   width: "100%",
                 }}
               >
-                Add to Favorites
+                Add to Favorites ❤️
               </button>
             )}
           </div>
@@ -119,4 +128,3 @@ export default function CarsPage() {
     </div>
   );
 }
-
